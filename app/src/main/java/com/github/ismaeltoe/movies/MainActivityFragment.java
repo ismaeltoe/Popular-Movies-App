@@ -43,8 +43,11 @@ public class MainActivityFragment extends Fragment {
     private static final String SORT_SETTING_KEY = "sort_setting";
     private static final String POPULARITY_DESC = "popularity.desc";
     private static final String RATING_DESC = "vote_average.desc";
+    private static final String MOVIES_KEY = "movies";
 
     private String mSortBy = POPULARITY_DESC;
+
+    private ArrayList<Movie> mMovies = null;
 
     public MainActivityFragment() {
     }
@@ -116,8 +119,20 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SORT_SETTING_KEY)) {
-            mSortBy = savedInstanceState.getString(SORT_SETTING_KEY);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
+                mSortBy = savedInstanceState.getString(SORT_SETTING_KEY);
+            }
+            if (savedInstanceState.containsKey(MOVIES_KEY)) {
+                mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
+                for (Movie movie : mMovies) {
+                    mMovieGridAdapter.add(movie);
+                }
+            } else {
+                updateMovies(mSortBy);
+            }
+        } else {
+            updateMovies(mSortBy);
         }
 
         return view;
@@ -129,15 +144,12 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies(mSortBy);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (!mSortBy.contentEquals(POPULARITY_DESC)) {
             outState.putString(SORT_SETTING_KEY, mSortBy);
+        }
+        if (mMovies != null) {
+            outState.putParcelableArrayList(MOVIES_KEY, mMovies);
         }
         super.onSaveInstanceState(outState);
     }
@@ -237,11 +249,15 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Movie> movies) {
-            if (movies != null && mMovieGridAdapter != null) {
-                mMovieGridAdapter.clear();
-                for(Movie movie : movies) {
-                    mMovieGridAdapter.add(movie);
+            if (movies != null) {
+                if (mMovieGridAdapter != null) {
+                    mMovieGridAdapter.clear();
+                    for (Movie movie : movies) {
+                        mMovieGridAdapter.add(movie);
+                    }
                 }
+                mMovies = new ArrayList<>();
+                mMovies.addAll(movies);
             }
         }
     }
