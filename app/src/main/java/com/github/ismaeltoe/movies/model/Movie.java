@@ -3,6 +3,9 @@ package com.github.ismaeltoe.movies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Ismael on 10/06/2015.
  */
@@ -20,14 +23,14 @@ public class Movie implements Parcelable {
 
     }
 
-    public Movie(int id, String title, String image, String image2, String overview, int rating, String date) {
-        this.id = id;
-        this.title = title;
-        this.image = image;
-        this.image2 = image2;
-        this.overview = overview;
-        this.rating = rating;
-        this.date = date;
+    public Movie(JSONObject movie) throws JSONException {
+        this.id = movie.getInt("id");
+        this.title = movie.getString("original_title");
+        this.image = movie.getString("poster_path");
+        this.image2 = movie.getString("backdrop_path");
+        this.overview = movie.getString("overview");
+        this.rating = movie.getInt("vote_average");
+        this.date = movie.getString("release_date");
     }
 
     public int getId() {

@@ -40,7 +40,7 @@ public class MainActivityFragment extends Fragment {
     private GridView mGridView;
     private MovieGridAdapter mMovieGridAdapter;
 
-    private static final String SORT_SETTING = "sort_setting";
+    private static final String SORT_SETTING_KEY = "sort_setting";
     private static final String POPULARITY_DESC = "popularity.desc";
     private static final String RATING_DESC = "vote_average.desc";
 
@@ -116,8 +116,8 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SORT_SETTING)) {
-            mSortBy = savedInstanceState.getString(SORT_SETTING);
+        if (savedInstanceState != null && savedInstanceState.containsKey(SORT_SETTING_KEY)) {
+            mSortBy = savedInstanceState.getString(SORT_SETTING_KEY);
         }
 
         return view;
@@ -136,8 +136,8 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mSortBy != POPULARITY_DESC) {
-            outState.putString(SORT_SETTING, mSortBy);
+        if (!mSortBy.contentEquals(POPULARITY_DESC)) {
+            outState.putString(SORT_SETTING_KEY, mSortBy);
         }
         super.onSaveInstanceState(outState);
     }
@@ -154,15 +154,7 @@ public class MainActivityFragment extends Fragment {
 
             for(int i = 0; i < movieArray.length(); i++) {
                 JSONObject movie = movieArray.getJSONObject(i);
-                Movie movieModel = new Movie(
-                        movie.getInt("id"),
-                        movie.getString("original_title"),
-                        movie.getString("poster_path"),
-                        movie.getString("backdrop_path"),
-                        movie.getString("overview"),
-                        movie.getInt("vote_average"),
-                        movie.getString("release_date")
-                );
+                Movie movieModel = new Movie(movie);
                 results.add(movieModel);
             }
 
