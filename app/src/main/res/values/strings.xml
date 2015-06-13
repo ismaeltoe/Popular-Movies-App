@@ -6,4 +6,5 @@
     <string name="title_activity_detail">Movie Details</string>
     <string name="rating">Rating</string>
     <string name="release_date">Released</string>
+    <string name="details">Details</string>
 </resources>
