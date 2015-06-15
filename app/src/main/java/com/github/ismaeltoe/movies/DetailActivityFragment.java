@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +54,7 @@ public class DetailActivityFragment extends Fragment {
     private TextView mVoteAverageView;
     private LinearListView mTrailersView;
     private LinearListView mReviewsView;
+    private CardView mReviewsCardview;
 
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
@@ -78,6 +80,7 @@ public class DetailActivityFragment extends Fragment {
         mVoteAverageView = (TextView) rootView.findViewById(R.id.detail_vote_average);
         mTrailersView = (LinearListView) rootView.findViewById(R.id.detail_trailers);
         mReviewsView = (LinearListView) rootView.findViewById(R.id.detail_reviews);
+        mReviewsCardview = (CardView) rootView.findViewById(R.id.detail_cardview_reviews);
 
         mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>());
         mTrailersView.setAdapter(mTrailerAdapter);
@@ -322,10 +325,15 @@ public class DetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Review> reviews) {
-            if (reviews != null & mReviewAdapter != null) {
-                mReviewAdapter.clear();
-                for (Review review : reviews) {
-                    mReviewAdapter.add(review);
+            if (reviews != null) {
+                if (reviews.size() > 0) {
+                    mReviewsCardview.setVisibility(View.VISIBLE);
+                    if (mReviewAdapter != null) {
+                        mReviewAdapter.clear();
+                        for (Review review : reviews) {
+                            mReviewAdapter.add(review);
+                        }
+                    }
                 }
             }
         }
