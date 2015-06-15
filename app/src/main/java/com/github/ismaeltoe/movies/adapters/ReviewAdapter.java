@@ -1,6 +1,7 @@
 package com.github.ismaeltoe.movies.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class ReviewAdapter extends BaseAdapter {
         viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.authorView.setText(review.getAuthor());
-        viewHolder.contentView.setText(review.getContent());
+        viewHolder.contentView.setText(Html.fromHtml(review.getContent()));
 
         return view;
     }
