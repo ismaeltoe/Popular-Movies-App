@@ -107,7 +107,7 @@ public class MainActivityFragment extends Fragment {
 
         mGridView = (GridView) view.findViewById(R.id.gridview_movies);
 
-        mMovieGridAdapter = new MovieGridAdapter(getActivity());
+        mMovieGridAdapter = new MovieGridAdapter(getActivity(), new ArrayList<Movie>());
         mGridView.setAdapter(mMovieGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
