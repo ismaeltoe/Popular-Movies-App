@@ -48,13 +48,17 @@ public class DetailActivityFragment extends Fragment {
     private Movie mMovie;
 
     private ImageView mImageView;
+
     private TextView mTitleView;
     private TextView mOverviewView;
     private TextView mDateView;
     private TextView mVoteAverageView;
+
     private LinearListView mTrailersView;
     private LinearListView mReviewsView;
+
     private CardView mReviewsCardview;
+    private CardView mTrailersCardview;
 
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
@@ -74,13 +78,17 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mImageView = (ImageView) rootView.findViewById(R.id.detail_image);
+
         mTitleView = (TextView) rootView.findViewById(R.id.detail_title);
         mOverviewView = (TextView) rootView.findViewById(R.id.detail_overview);
         mDateView = (TextView) rootView.findViewById(R.id.detail_date);
         mVoteAverageView = (TextView) rootView.findViewById(R.id.detail_vote_average);
+
         mTrailersView = (LinearListView) rootView.findViewById(R.id.detail_trailers);
         mReviewsView = (LinearListView) rootView.findViewById(R.id.detail_reviews);
-        mReviewsCardview = (CardView) rootView.findViewById(R.id.detail_cardview_reviews);
+
+        mReviewsCardview = (CardView) rootView.findViewById(R.id.detail_reviews_cardview);
+        mTrailersCardview = (CardView) rootView.findViewById(R.id.detail_trailers_cardview);
 
         mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>());
         mTrailersView.setAdapter(mTrailerAdapter);
@@ -224,10 +232,15 @@ public class DetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Trailer> trailers) {
-            if (trailers != null & mTrailerAdapter != null) {
-                mTrailerAdapter.clear();
-                for (Trailer trailer : trailers) {
-                    mTrailerAdapter.add(trailer);
+            if (trailers != null) {
+                if (trailers.size() > 0) {
+                    mTrailersCardview.setVisibility(View.VISIBLE);
+                    if (mTrailerAdapter != null) {
+                        mTrailerAdapter.clear();
+                        for (Trailer trailer : trailers) {
+                            mTrailerAdapter.add(trailer);
+                        }
+                    }
                 }
             }
         }
