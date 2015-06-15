@@ -9,4 +9,8 @@
     <string name="details">Details</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="action_favorite">Favorite</string>
+    <string name="content_authority">com.github.ismaeltoe.movies</string>
+    <string name="removed_from_favorites">Removed from Favorites</string>
+    <string name="added_to_favorites">Added to Favorites</string>
 </resources>

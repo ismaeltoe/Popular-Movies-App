@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_favorite"
+        android:title="@string/action_favorite"
+        app:showAsAction="always"
+        android:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha"
+        app:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha">
+    </item>
+</menu>
