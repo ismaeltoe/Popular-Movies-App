@@ -50,6 +50,13 @@ public class MovieGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void setData(List<Movie> data) {
+        clear();
+        for (Movie movie : data) {
+            add(movie);
+        }
+    }
+
     @Override
     public int getCount() {
         return mObjects.size();

@@ -9,6 +9,8 @@
                     android:title="@string/action_sort_by_popularity" />
                 <item android:id="@+id/action_sort_by_rating"
                     android:title="@string/action_sort_by_rating" />
+                <item android:id="@+id/action_sort_by_favorite"
+                    android:title="@string/action_sort_by_favorite" />
             </group>
         </menu>
     </item>

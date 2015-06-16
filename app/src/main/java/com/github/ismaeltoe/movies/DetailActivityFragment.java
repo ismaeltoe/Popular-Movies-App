@@ -221,7 +221,8 @@ public class DetailActivityFragment extends Fragment {
         mReviewAdapter = new ReviewAdapter(getActivity(), new ArrayList<Review>());
         mReviewsView.setAdapter(mReviewAdapter);
 
-        String image_url = "http://image.tmdb.org/t/p/w342" + mMovie.getImage2();
+        String image_url = Utility.buildImageUrl(342, mMovie.getImage2());
+
         Glide.with(this).load(image_url).into(mImageView);
 
         mTitleView.setText(mMovie.getTitle());

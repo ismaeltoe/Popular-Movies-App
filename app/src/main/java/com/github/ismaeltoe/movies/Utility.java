@@ -22,4 +22,8 @@ public class Utility {
         cursor.close();
         return numRows;
     }
+
+    public static String buildImageUrl(int width, String fileName) {
+        return "http://image.tmdb.org/t/p/w" + Integer.toString(width) + fileName;
+    }
 }
