@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,6 +78,11 @@ public class DetailActivityFragment extends Fragment {
 
     private Toast mToast;
 
+    private ShareActionProvider mShareActionProvider;
+
+    // the first trailer video to share
+    private Trailer mTrailer;
+
     public DetailActivityFragment() {
     }
 
@@ -91,6 +98,7 @@ public class DetailActivityFragment extends Fragment {
             inflater.inflate(R.menu.menu_fragment_detail, menu);
 
             final MenuItem action_favorite = menu.findItem(R.id.action_favorite);
+            MenuItem action_share = menu.findItem(R.id.action_share);
             /*
             action_favorite.setIcon(Utility.isFavorited(getActivity(), mMovie.getId()) == 1 ?
                     R.drawable.abc_btn_rating_star_on_mtrl_alpha :
@@ -109,6 +117,12 @@ public class DetailActivityFragment extends Fragment {
                             R.drawable.abc_btn_rating_star_off_mtrl_alpha);
                 }
             }.execute();
+
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(action_share);
+
+            if (mTrailer != null) {
+                mShareActionProvider.setShareIntent(createShareMovieIntent());
+            }
         }
     }
 
@@ -276,6 +290,15 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 
+    private Intent createShareMovieIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.getTitle() + " " +
+                "http://www.youtube.com/watch?v=" + mTrailer.getKey());
+        return shareIntent;
+    }
+
     public class FetchTrailersTask extends AsyncTask<String, Void, List<Trailer>> {
 
         private final String LOG_TAG = FetchTrailersTask.class.getSimpleName();
@@ -380,6 +403,11 @@ public class DetailActivityFragment extends Fragment {
                         for (Trailer trailer : trailers) {
                             mTrailerAdapter.add(trailer);
                         }
+                    }
+
+                    mTrailer = trailers.get(0);
+                    if (mShareActionProvider != null) {
+                        mShareActionProvider.setShareIntent(createShareMovieIntent());
                     }
                 }
             }

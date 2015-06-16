@@ -1,9 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item android:id="@+id/action_favorite"
         android:title="@string/action_favorite"
         app:showAsAction="always"
         android:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha"
-        app:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha">
-    </item>
+        app:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha" />
+
+    <item android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="ifRoom"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+        app:icon="@drawable/abc_ic_menu_share_mtrl_alpha" />
 </menu>
