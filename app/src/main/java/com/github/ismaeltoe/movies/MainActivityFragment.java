@@ -1,7 +1,6 @@
 package com.github.ismaeltoe.movies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -75,6 +74,15 @@ public class MainActivityFragment extends Fragment {
     public static final int COL_DATE = 7;
 
     public MainActivityFragment() {
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        void onItemSelected(Movie movie);
     }
 
     @Override
@@ -159,9 +167,7 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = mMovieGridAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
-                startActivity(intent);
+                ((Callback) getActivity()).onItemSelected(movie);
             }
         });
 

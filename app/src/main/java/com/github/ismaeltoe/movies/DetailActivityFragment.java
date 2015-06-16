@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ import java.util.List;
  */
 public class DetailActivityFragment extends Fragment {
 
+    public static final String TAG = DetailActivityFragment.class.getSimpleName();
+
     static final String DETAIL_MOVIE = "DETAIL_MOVIE";
 
     private Movie mMovie;
@@ -69,6 +72,8 @@ public class DetailActivityFragment extends Fragment {
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
 
+    private ScrollView mDetailLayout;
+
     private Toast mToast;
 
     public DetailActivityFragment() {
@@ -82,26 +87,29 @@ public class DetailActivityFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_fragment_detail, menu);
+        if (mMovie != null) {
+            inflater.inflate(R.menu.menu_fragment_detail, menu);
 
-        final MenuItem action_favorite = menu.findItem(R.id.action_favorite);
-        /*
-        action_favorite.setIcon(Utility.isFavorited(getActivity(), mMovie.getId()) == 1 ?
-                R.drawable.abc_btn_rating_star_on_mtrl_alpha :
-                R.drawable.abc_btn_rating_star_off_mtrl_alpha);
-        */
-        new AsyncTask<Void, Void, Integer>() {
-            @Override
-            protected Integer doInBackground(Void... params) {
-                return Utility.isFavorited(getActivity(), mMovie.getId());
-            }
-            @Override
-            protected void onPostExecute(Integer isFavorited) {
-                action_favorite.setIcon(isFavorited == 1 ?
-                        R.drawable.abc_btn_rating_star_on_mtrl_alpha :
-                        R.drawable.abc_btn_rating_star_off_mtrl_alpha);
-            }
-        }.execute();
+            final MenuItem action_favorite = menu.findItem(R.id.action_favorite);
+            /*
+            action_favorite.setIcon(Utility.isFavorited(getActivity(), mMovie.getId()) == 1 ?
+                    R.drawable.abc_btn_rating_star_on_mtrl_alpha :
+                    R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+            */
+            new AsyncTask<Void, Void, Integer>() {
+                @Override
+                protected Integer doInBackground(Void... params) {
+                    return Utility.isFavorited(getActivity(), mMovie.getId());
+                }
+
+                @Override
+                protected void onPostExecute(Integer isFavorited) {
+                    action_favorite.setIcon(isFavorited == 1 ?
+                            R.drawable.abc_btn_rating_star_on_mtrl_alpha :
+                            R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                }
+            }.execute();
+        }
     }
 
     @Override
@@ -109,71 +117,75 @@ public class DetailActivityFragment extends Fragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_favorite:
-                // check if movie is in favorites or not
-                new AsyncTask<Void, Void, Integer>() {
+                if (mMovie != null) {
+                    // check if movie is in favorites or not
+                    new AsyncTask<Void, Void, Integer>() {
 
-                    @Override
-                    protected Integer doInBackground(Void... params) {
-                        return Utility.isFavorited(getActivity(), mMovie.getId());
-                    }
-
-                    @Override
-                    protected void onPostExecute(Integer isFavorited) {
-                        // if it is in favorites
-                        if (isFavorited == 1) {
-                            // delete from favorites
-                            new AsyncTask<Void, Void, Integer>() {
-                                @Override
-                                protected Integer doInBackground(Void... params) {
-                                    return getActivity().getContentResolver().delete(
-                                            MovieContract.MovieEntry.CONTENT_URI,
-                                            MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                                            new String[]{Integer.toString(mMovie.getId())}
-                                    );
-                                }
-                                @Override
-                                protected void onPostExecute(Integer rowsDeleted) {
-                                    item.setIcon(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
-                                    if (mToast != null) {
-                                        mToast.cancel();
-                                    }
-                                    mToast = Toast.makeText(getActivity(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT);
-                                    mToast.show();
-                                }
-                            }.execute();
+                        @Override
+                        protected Integer doInBackground(Void... params) {
+                            return Utility.isFavorited(getActivity(), mMovie.getId());
                         }
-                        // if it is not in favorites
-                        else {
-                            // add to favorites
-                            new AsyncTask<Void, Void, Uri>() {
-                                @Override
-                                protected Uri doInBackground(Void... params) {
-                                    ContentValues values = new ContentValues();
 
-                                    values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
-                                    values.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
-                                    values.put(MovieContract.MovieEntry.COLUMN_IMAGE, mMovie.getImage());
-                                    values.put(MovieContract.MovieEntry.COLUMN_IMAGE2, mMovie.getImage2());
-                                    values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
-                                    values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getRating());
-                                    values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getDate());
-
-                                    return getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,
-                                            values);
-                                }
-                                @Override
-                                protected void onPostExecute(Uri returnUri) {
-                                    item.setIcon(R.drawable.abc_btn_rating_star_on_mtrl_alpha);
-                                    if (mToast != null) {
-                                        mToast.cancel();
+                        @Override
+                        protected void onPostExecute(Integer isFavorited) {
+                            // if it is in favorites
+                            if (isFavorited == 1) {
+                                // delete from favorites
+                                new AsyncTask<Void, Void, Integer>() {
+                                    @Override
+                                    protected Integer doInBackground(Void... params) {
+                                        return getActivity().getContentResolver().delete(
+                                                MovieContract.MovieEntry.CONTENT_URI,
+                                                MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                                                new String[]{Integer.toString(mMovie.getId())}
+                                        );
                                     }
-                                    mToast = Toast.makeText(getActivity(), getString(R.string.added_to_favorites), Toast.LENGTH_SHORT);
-                                    mToast.show();
-                                }
-                            }.execute();
+
+                                    @Override
+                                    protected void onPostExecute(Integer rowsDeleted) {
+                                        item.setIcon(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                                        if (mToast != null) {
+                                            mToast.cancel();
+                                        }
+                                        mToast = Toast.makeText(getActivity(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT);
+                                        mToast.show();
+                                    }
+                                }.execute();
+                            }
+                            // if it is not in favorites
+                            else {
+                                // add to favorites
+                                new AsyncTask<Void, Void, Uri>() {
+                                    @Override
+                                    protected Uri doInBackground(Void... params) {
+                                        ContentValues values = new ContentValues();
+
+                                        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
+                                        values.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
+                                        values.put(MovieContract.MovieEntry.COLUMN_IMAGE, mMovie.getImage());
+                                        values.put(MovieContract.MovieEntry.COLUMN_IMAGE2, mMovie.getImage2());
+                                        values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
+                                        values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getRating());
+                                        values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getDate());
+
+                                        return getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,
+                                                values);
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Uri returnUri) {
+                                        item.setIcon(R.drawable.abc_btn_rating_star_on_mtrl_alpha);
+                                        if (mToast != null) {
+                                            mToast.cancel();
+                                        }
+                                        mToast = Toast.makeText(getActivity(), getString(R.string.added_to_favorites), Toast.LENGTH_SHORT);
+                                        mToast.show();
+                                    }
+                                }.execute();
+                            }
                         }
-                    }
-                }.execute();
+                    }.execute();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -190,6 +202,14 @@ public class DetailActivityFragment extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        mDetailLayout = (ScrollView) rootView.findViewById(R.id.detail_layout);
+
+        if (mMovie != null) {
+            mDetailLayout.setVisibility(View.VISIBLE);
+        } else {
+            mDetailLayout.setVisibility(View.INVISIBLE);
+        }
 
         mImageView = (ImageView) rootView.findViewById(R.id.detail_image);
 
@@ -221,25 +241,28 @@ public class DetailActivityFragment extends Fragment {
         mReviewAdapter = new ReviewAdapter(getActivity(), new ArrayList<Review>());
         mReviewsView.setAdapter(mReviewAdapter);
 
-        String image_url = Utility.buildImageUrl(342, mMovie.getImage2());
+        if (mMovie != null) {
 
-        Glide.with(this).load(image_url).into(mImageView);
+            String image_url = Utility.buildImageUrl(342, mMovie.getImage2());
 
-        mTitleView.setText(mMovie.getTitle());
-        mOverviewView.setText(mMovie.getOverview());
+            Glide.with(this).load(image_url).into(mImageView);
 
-        String movie_date = mMovie.getDate();
+            mTitleView.setText(mMovie.getTitle());
+            mOverviewView.setText(mMovie.getOverview());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            String date = DateUtils.formatDateTime(getActivity(),
-                    formatter.parse(movie_date).getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
-            mDateView.setText(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            String movie_date = mMovie.getDate();
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                String date = DateUtils.formatDateTime(getActivity(),
+                        formatter.parse(movie_date).getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+                mDateView.setText(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            mVoteAverageView.setText(Integer.toString(mMovie.getRating()));
         }
-
-        mVoteAverageView.setText(Integer.toString(mMovie.getRating()));
 
         return rootView;
     }
@@ -247,8 +270,10 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        new FetchTrailersTask().execute(Integer.toString(mMovie.getId()));
-        new FetchReviewsTask().execute(Integer.toString(mMovie.getId()));
+        if (mMovie != null) {
+            new FetchTrailersTask().execute(Integer.toString(mMovie.getId()));
+            new FetchReviewsTask().execute(Integer.toString(mMovie.getId()));
+        }
     }
 
     public class FetchTrailersTask extends AsyncTask<String, Void, List<Trailer>> {
